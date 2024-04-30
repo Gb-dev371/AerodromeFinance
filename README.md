@@ -26,6 +26,14 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
+### Adding environment variables
+Next, set up your .env file with the necessary environment variables:
+
+```bash
+NODE_URL = 'your_base_node_url'
+API_KEY_BASE_SCAN = 'your_api_key_of_base_scan'
+```
+
 ### Running the code
 ```
 python main.py
