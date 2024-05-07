@@ -5,6 +5,7 @@ from web3 import Web3
 from utils import get_block_number_by_timestamp, get_contract_abi
 from ScanApi.scan_api import ScanApi
 from ScanApi.utils.functions import timestamp_to_date, convert_date_to_timestamp
+from get_price_moralis import get_price_moralis
 
 load_dotenv(override=True)
 NODE_URL = os.getenv('NODE_URL')
@@ -23,8 +24,9 @@ def get_pool_votes_in_a_timestamp(pool, voter_contract, timestamp):
     """_summary_
 
     Args:
-        pool (str): _description_
-        timestamp (int): _description_
+        pool (str): Pool address
+        voter_contract: Instancy of the contract
+        timestamp (int): timestamp to get the pool votes
 
     Returns:
         dict: A dict with data about votes that the pool received
@@ -91,17 +93,30 @@ def get_bribes_created(scan_api:ScanApi, pool_contract_address, voter_contract_a
                 block_number = int(tx['blockNumber'])
                 input_data = tx['input']
                 input_decoded = scan_api.get_input_decoded(bribe_contract_address, input_data)[1] # {'token': '0xA3d1a8DEB97B111454B294E2324EfAD13a9d8396', 'amount': 250000000000000000000}
+                token_address = input_decoded['token']
+                token_amount = input_decoded['amount']
                 
-                name = get_pool_name(scan_api, pool_contract_address)
+                pool_name = get_pool_name(scan_api, pool_contract_address)
                 tx_hash = tx['hash']
                 timestamp = scan_api.get_timestamp(tx_hash)
                 date = timestamp_to_date(timestamp)
-                input_decoded['Tx hash'] = tx_hash
-                input_decoded['Timestamp'] = timestamp
-                input_decoded['Block Number'] = block_number
-                input_decoded['Date'] = date
-                input_decoded['Name'] = name
-                bribe_pool_list.append(input_decoded)
+                
+                token_abi = scan_api.get_contract_abi(token_address)
+
+                try:
+                    token_decimals = int(scan_api.get_token_decimals(token_address, token_abi))
+                    token_amount /= 10 ** token_decimals
+                    token_symbol = scan_api.get_token_symbol(token_address, token_abi)
+                except:
+                        token_symbol = 'ERROR'
+                try:
+                    price_token = get_price_moralis('base', token_address, block_number)['usdPrice']
+                except Exception as e:
+                    price_token = 'ERROR'
+
+                
+                line = {'Token address': token_address, 'Token symbol': token_symbol, 'Token amount': token_amount, 'Amount in $': '', 'Token value': price_token, 'Pool name': pool_name, 'Pool address': pool_contract_address, 'Tx hash': tx_hash, 'Timestamp': timestamp, 'Block number': block_number, 'Date': date}
+                bribe_pool_list.append(line)
             
     return bribe_pool_list
 
@@ -119,4 +134,7 @@ def get_all_bribes_for_all_pools(scan_api:ScanApi, start_date, end_date, voter_c
     for i in range(0, length):
         pool_address = voter_contract.functions.pools(i).call()
         bribe_pool_list = get_bribes_created(scan_api, pool_address, voter_contract_address, start_block=start_block, end_block=end_block)
+        count+=1
         yield bribe_pool_list
+
+    
