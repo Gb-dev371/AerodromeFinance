@@ -26,6 +26,11 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
+### Clone the ScanApi project
+```
+git clone https://github.com/Gb-dev371/ScanApi.git
+```
+
 ### Adding environment variables
 Next, set up your .env file with the necessary environment variables:
 
