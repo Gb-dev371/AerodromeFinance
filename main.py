@@ -1,7 +1,6 @@
-from functions_aerodrome import get_all_votes_for_all_pools_in_the_week, get_pool_votes_in_a_timestamp
-from bribes import get_all_bribes_for_all_pools
+from functions_aerodrome import get_all_votes_for_all_pools_in_the_week, get_pool_votes_in_a_timestamp, get_all_bribes_for_all_pools
 from ScanApi.scan_api import ScanApi
-from info import base, API_KEY_BASE_SCAN
+from ScanApi.info import base, API_KEY_BASE_SCAN
 from web3 import Web3
 
 # print(get_pool_votes_in_a_timestamp('pool address', timestamp=''))
