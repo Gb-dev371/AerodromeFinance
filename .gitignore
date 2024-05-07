@@ -2,3 +2,4 @@
 .env
 .python_version
 __pycache__
+ScanApi
