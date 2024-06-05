@@ -1,0 +1,5 @@
+from dotdot_ellipsis.functions_ellipsis import save_all_votes_for_a_specific_pool_in_ellipsis_in_a_json_file
+from dotdot_ellipsis.functions_dotdot import save_all_votes_for_all_pools_in_dotdot_in_a_json_file, save_all_votes_for_a_specific_pool_in_dotdot_in_a_json_file
+
+# save_all_votes_for_a_specific_pool_in_dotdot_in_a_json_file('dotdot_votes_2brl.json', '0x1B6E11c5DB9B15DE87714eA9934a6c52371CfEA9', 1, 2)
+save_all_votes_for_a_specific_pool_in_ellipsis_in_a_json_file('ellipsis_2brl.json', '0x1B6E11c5DB9B15DE87714eA9934a6c52371CfEA9', 1, 50)

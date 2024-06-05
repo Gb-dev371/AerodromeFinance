@@ -11,7 +11,9 @@ def write_sheet_bribes(scan_api, start_date, end_date, voter_contract_address):
     df = pd.read_excel(arquivo)
     for bribe_pool_list in get_all_bribes_for_all_pools(scan_api, start_date, end_date, voter_contract_address):
         if len(bribe_pool_list) > 0:
+            for bribe_index in range(len(bribe_pool_list)):
             # print(bribe_pool_list)
-            line = bribe_pool_list[0]
-            df = df._append(line, ignore_index=True)
+                line = bribe_pool_list[bribe_index]
+                print(line)
+                df = df._append(line, ignore_index=True)
     df.to_excel(arquivo, index=False)

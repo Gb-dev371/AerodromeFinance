@@ -2,7 +2,6 @@ import requests
 import os
 from dotenv import load_dotenv
 from web3 import Web3
-from utils import get_block_number_by_timestamp, get_contract_abi
 from ScanApi.scan_api import ScanApi
 from ScanApi.utils.functions import timestamp_to_date, convert_date_to_timestamp
 from get_price_moralis import get_price_moralis
@@ -20,7 +19,7 @@ def get_pool_name(scan_api:ScanApi, pool_contract_address):
 
 
 ''' VOTES '''
-def get_pool_votes_in_a_timestamp(pool, voter_contract, timestamp):
+def get_pool_votes_in_a_timestamp(scan_api:ScanApi, pool, voter_contract, timestamp):
     """_summary_
 
     Args:
@@ -36,7 +35,7 @@ def get_pool_votes_in_a_timestamp(pool, voter_contract, timestamp):
 
     end_timestamp_votation  = voter_contract.functions.epochVoteEnd(timestamp).call()
 
-    end_block_week = get_block_number_by_timestamp(end_timestamp_votation, 'before')
+    end_block_week = scan_api.get_block_number_by_timestamp(end_timestamp_votation, 'before')
 
     try:
         pool_votes = voter_contract.functions.weights(pool_address).call(block_identifier=end_block_week) / 10**18 # pode dar erro caso coloque uma semana em que essa pool não podia receber votação
@@ -53,7 +52,7 @@ def get_pool_votes_in_a_timestamp(pool, voter_contract, timestamp):
     return {'Pool Address': pool, 'Pool Votes': pool_votes, 'Share': share, 'Total Votes': total_votes, 'Timestamp': timestamp}
 
 
-def get_all_votes_for_all_pools_in_the_week(voter_contract, timestamp):
+def get_all_votes_for_all_pools_in_the_week(scan_api:ScanApi, voter_contract, timestamp):
     """_summary_
 
     Args:
@@ -63,7 +62,7 @@ def get_all_votes_for_all_pools_in_the_week(voter_contract, timestamp):
         dict: A dict with data about votes that the pool received
     """
 
-    block_number = get_block_number_by_timestamp(timestamp, 'before')
+    block_number = scan_api.get_block_number_by_timestamp(timestamp, 'before')
 
     length = voter_contract.functions.length().call(block_identifier=block_number)
 
@@ -134,7 +133,6 @@ def get_all_bribes_for_all_pools(scan_api:ScanApi, start_date, end_date, voter_c
     for i in range(0, length):
         pool_address = voter_contract.functions.pools(i).call()
         bribe_pool_list = get_bribes_created(scan_api, pool_address, voter_contract_address, start_block=start_block, end_block=end_block)
-        count+=1
         yield bribe_pool_list
 
     

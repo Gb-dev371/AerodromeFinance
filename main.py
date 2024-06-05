@@ -11,5 +11,5 @@ voter_aerodrome_abi = base_scan.get_contract_abi('0x16613524e02ad97eDfeF371bC883
 voter_aerodrome_contract = base_scan.rpc.eth.contract(address=voter_aerodrome_address, abi=voter_aerodrome_abi)
 
 
-write_sheet_bribes(base_scan, '2024-05-01 10:00:00', '2024-05-07 10:00:00', voter_aerodrome_address)
+write_sheet_bribes(base_scan, '2024-05-15 10:00:00', '2024-05-18 10:00:00', voter_aerodrome_address)
 
